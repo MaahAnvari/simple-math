@@ -1,0 +1,14 @@
+{
+  "name": "simple-math",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal JavaScript test suite used to produce JUnit XML unit test reports for the P4SaMD Verification demo.",
+  "scripts": {
+    "test": "vitest run",
+    "test:junit": "vitest run --reporter=junit --outputFile=report.xml"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.11"
+  }
+}

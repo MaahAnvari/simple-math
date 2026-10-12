@@ -1,0 +1,45 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run unit tests (JUnit XML)
+        run: npm run test:junit
+
+      # `if: always()` is the equivalent of GitLab's `artifacts: when: always`.
+      # Without it the report is not uploaded when tests fail, which is exactly
+      # the run needed to demo the failing-report approval flow.
+      - name: Upload JUnit report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: junit-report
+          path: report.xml
+          if-no-files-found: error
+
+      - name: Render report in the run summary
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: report.xml
+          check_name: Unit tests
